@@ -1,0 +1,28 @@
+[project]
+name = 'AnonSpeak'
+description = ''
+authors = []
+telemetry = true
+cache_dir = './.cache'
+requirements = []
+[contracts.AnonSpeak]
+path = 'contracts/AnonSpeak.clar'
+clarity_version = 3
+epoch = 3.1
+
+[contracts.AnonSpeakcontract]
+path = 'contracts/AnonSpeakcontract.clar'
+clarity_version = 3
+epoch = 3.1
+[repl.analysis]
+passes = ['check_checker']
+
+[repl.analysis.check_checker]
+strict = false
+trusted_sender = false
+trusted_caller = false
+callee_filter = false
+
+[repl.remote_data]
+enabled = false
+api_url = 'https://api.hiro.so'
