@@ -235,3 +235,66 @@
     (ok true)
   )
 )
+
+;; read only functions
+
+;; Get feedback by ID
+(define-read-only (get-feedback (feedback-id uint))
+  (map-get? feedbacks { feedback-id: feedback-id })
+)
+
+;; Get user submission data
+(define-read-only (get-user-data (user-hash (buff 32)))
+  (map-get? user-submissions { user-hash: user-hash })
+)
+
+;; Get ZK proof verification status
+(define-read-only (get-proof-status (proof-hash (buff 32)))
+  (map-get? zk-proofs { proof-hash: proof-hash })
+)
+
+;; Get feedback rating
+(define-read-only (get-feedback-rating (feedback-id uint) (rater-hash (buff 32)))
+  (map-get? feedback-ratings { feedback-id: feedback-id, rater-hash: rater-hash })
+)
+
+;; Get Gaia storage info
+(define-read-only (get-gaia-storage (feedback-id uint))
+  (map-get? gaia-storage { feedback-id: feedback-id })
+)
+
+;; Get current feedback counter
+(define-read-only (get-feedback-counter)
+  (var-get feedback-counter)
+)
+
+;; Get contract status
+(define-read-only (get-contract-status)
+  {
+    paused: (var-get contract-paused),
+    min-holdings: (var-get min-holdings-required),
+    total-feedbacks: (var-get feedback-counter)
+  }
+)
+
+;; Check if user can submit (not in cooldown)
+(define-read-only (can-user-submit (user-hash (buff 32)))
+  (let
+    (
+      (user-data (map-get? user-submissions { user-hash: user-hash }))
+      (current-block block-height)
+    )
+    (match user-data
+      data
+        (>= (- current-block (get last-submission data)) SPAM_COOLDOWN_PERIOD)
+      true ;; New user can always submit
+    )
+  )
+)
+
+;; Calculate average rating for feedback
+(define-read-only (get-feedback-average-rating (feedback-id uint))
+  ;; This would need additional mapping to track all ratings per feedback
+  ;; Simplified version returns none for now
+  none
+)
